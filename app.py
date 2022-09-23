@@ -34,9 +34,19 @@ pipe = StableDiffusionPipeline.from_pretrained(
     modelid, revision="fp16", torch_dtype=torch.float16, use_auth_token=auth_token)
 pipe.to(device)
 
+# Function for diffusion model
+
 
 def generate():
-    pass
+    # Create an image
+    with autocast(device):
+        # Guidance scale is how much you want Stable diffusion to follow the prompt. The higher, the stricter to follow
+        # Extract the image
+        image = pipe(prompt.get(), guidance_scale=8.5)["sample"][0]
+
+    image.save('generatedimage.png')
+    img = ImageTk.PhotoImage(image)
+    lmain.configure(image=img)
 
 
 # Create a button
@@ -45,5 +55,6 @@ trigger = ctk.CTkButton(height=40, width=120, text_font=(
 # Text of button
 trigger.configure(text="Generate")
 trigger.place(x=206, y=60)
+
 # Run the app
 app.mainloop()
